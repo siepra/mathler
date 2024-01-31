@@ -4,7 +4,7 @@ import * as hooks from '../src/hooks/useFetchPuzzle';
 import Game from '../src/screens/Game';
 
 describe('Game', () => {
-    it('Tiles gets proper colors assigned', () => {
+    test('Tiles gets proper colors assigned', () => {
         jest.spyOn(hooks, 'useFetchPuzzle').mockReturnValue({
             value: 108,
             equation: '23*5-7'
@@ -27,4 +27,23 @@ describe('Game', () => {
         expect(screen.getByTestId('0-4')).toHaveStyle({ backgroundColor: 'green' });    // -
         expect(screen.getByTestId('0-5')).toHaveStyle({ backgroundColor: 'green' });    // 7
     });
+
+    test('Winning the game disables keyboard', () => {
+        jest.spyOn(hooks, 'useFetchPuzzle').mockReturnValue({
+            value: 108,
+            equation: '23*5-7'
+        });
+
+        render(<Game />);
+
+        fireEvent.press(screen.getByTestId('key-2'));
+        fireEvent.press(screen.getByTestId('key-3'));
+        fireEvent.press(screen.getByTestId('key-*'));
+        fireEvent.press(screen.getByTestId('key-5'));
+        fireEvent.press(screen.getByTestId('key--'));
+        fireEvent.press(screen.getByTestId('key-7'));
+        fireEvent.press(screen.getByTestId('key-Enter'));
+
+        expect(screen.getByTestId('key-2')).toBeDisabled();
+    })
 });

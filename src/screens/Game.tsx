@@ -9,8 +9,24 @@ const Game: React.FC = () => {
   const puzzle = useFetchPuzzle();
 
   const [board, setBoard] = useState<TileProps[]>([]);
-
   const [pendingTiles, setPendingTiles] = useState<TileProps[]>([]);
+
+  const [isSolved, setIsSolved] = useState(false);
+
+  const getTileColor = useCallback((tile: TileProps, index: number) => {
+    const equationChars = puzzle.equation.split('');
+    const equationCharsSet = new Set(equationChars);
+
+    if (tile.character === equationChars[index]) {
+      // Character is exactly at the right place
+      return 'green';
+    } else if (equationCharsSet.has(tile.character)) {
+      // Character is in the equation but not at the right place
+      return 'yellow';
+    } else {
+      return 'grey';
+    }
+  }, [puzzle]);
 
   const submitPendingTiles = useCallback(() => {
     if (pendingTiles.length !== 6) {
@@ -18,22 +34,19 @@ const Game: React.FC = () => {
       return;
     }
 
-    const equationChars = puzzle.equation.split('');
-    const equationCharsSet = new Set(equationChars);
-
     const newTiles = pendingTiles.map((tile, index) => {
-      if (tile.character === equationChars[index]) {
-        return { ...tile, backgroundColor: 'green' };
-      } else if (equationCharsSet.has(tile.character)) {
-        return { ...tile, backgroundColor: 'yellow' };
-      } else {
-        return { ...tile, backgroundColor: 'grey' };
-      }
+      const color = getTileColor(tile, index);
+      return { ...tile, backgroundColor: color };
     });
+
+    const allGreen = newTiles.every(tile => tile.backgroundColor === 'green');
+    if (allGreen) {
+      setIsSolved(true);
+    }
 
     setBoard([...board, ...newTiles]);
     setPendingTiles([]);
-  }, [board, pendingTiles, puzzle]);
+  }, [getTileColor, pendingTiles, board]);
 
   const removeLastPendingTile = useCallback(() => {
     setPendingTiles(pendingTiles.slice(0, -1));
@@ -50,6 +63,11 @@ const Game: React.FC = () => {
   }, [pendingTiles]);
 
   const handleKeyPress = useCallback((key: string) => {
+    if (isSolved) {
+      console.log('Puzzle is already solved.');
+      return;
+    }
+
     console.log(`Key pressed: ${key}`);
 
     switch (key) {
@@ -63,12 +81,12 @@ const Game: React.FC = () => {
         addPendingTile(key);
         break;
     }
-  }, [submitPendingTiles, removeLastPendingTile, addPendingTile]);
+  }, [submitPendingTiles, removeLastPendingTile, addPendingTile, isSolved]);
 
   return (
     <View style={styles.game}>
       <Board tiles={[...board, ...pendingTiles]} />
-      <Keyboard handleKeyPress={handleKeyPress} />
+      <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved}/>
     </View>
   );
 };
