@@ -14,13 +14,13 @@ const Game: React.FC = () => {
   const [pendingSolution, setPendingSolution] = useState<string[]>([]);
   const [isSolved, setIsSolved] = useState<boolean>(false);
 
-  const compareEquasions = (): boolean => {
+  const compareEquasions = useCallback((): boolean => {
     const hasSameCharacters = arraysContainSameElements(pendingSolution, puzzle.equation);
     const pendingEquation = pendingSolution.join('');
     return hasSameCharacters && eval(pendingEquation) === puzzle.value
-  }
+  }, [pendingSolution, puzzle]);
 
-  const getTileColor = (character: string, index: number) => {
+  const getTileColor = useCallback((character: string, index: number) => {
     const equationSet = new Set(puzzle.equation);
 
     if (character === puzzle.equation[index]) {
@@ -32,9 +32,9 @@ const Game: React.FC = () => {
     } else {
       return 'grey';
     }
-  };
+  }, [puzzle]);
 
-  const submitPendingTiles = () => {
+  const submitPendingTiles = useCallback(() => {
     if (pendingSolution.length !== 6) {
       console.error('Error: You must enter 6 characters.');
       return;
@@ -53,17 +53,17 @@ const Game: React.FC = () => {
 
     setBoard([...board, ...newTiles]);
     setPendingSolution([]);
-  }
+  }, [compareEquasions, getTileColor, pendingSolution, board]);
 
-  const removeLastPendingCharacter = () => {
+  const removeLastPendingCharacter = useCallback(() => {
     setPendingSolution(pendingSolution.slice(0, -1));
-  }
+  }, [pendingSolution]);
 
-  const addPendingCharacter = (key: string) => {
+  const addPendingCharacter = useCallback((key: string) => {
     if (pendingSolution.length < 6) {
       setPendingSolution([...pendingSolution, key]);
     }
-  }
+  }, [pendingSolution]);
 
   const handleKeyPress = useCallback((key: string) => {
     if (isSolved) {
@@ -84,7 +84,7 @@ const Game: React.FC = () => {
         addPendingCharacter(key);
         break;
     }
-  }, [isSolved]);
+  }, [submitPendingTiles, removeLastPendingCharacter, addPendingCharacter, isSolved]);
 
   return (
     <View style={styles.game}>
