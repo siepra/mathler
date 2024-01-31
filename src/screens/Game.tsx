@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TileProps } from '../components/Tile';
 import { useFetchPuzzle } from '../hooks/useFetchPuzzle';
+import Header from '../components/Header';
 import Board from '../components/Board';
 import Keyboard from '../components/Keyboard';
 
@@ -85,6 +86,7 @@ const Game: React.FC = () => {
 
   return (
     <View style={styles.game}>
+      <Header puzzle={puzzle.value} />
       <Board tiles={[...board, ...pendingTiles]} />
       <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved}/>
     </View>
