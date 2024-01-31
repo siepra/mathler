@@ -8,7 +8,7 @@ interface KeyProps {
 
 const Key: React.FC<KeyProps> = React.memo(({ character, onPress }) => (
   <View style={styles.key}>
-    <Button title={character} onPress={() => onPress(character)} />
+    <Button title={character} onPress={() => onPress(character)} testID={`key-${character}`} />
   </View>
 ));
 

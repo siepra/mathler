@@ -4,10 +4,11 @@ import { View, Text, StyleSheet } from 'react-native';
 export interface TileProps {
   character: string;
   backgroundColor: string;
+  tileIndex?: string;
 }
 
-const Tile: React.FC<TileProps> = React.memo(({ character, backgroundColor }) => (
-  <View style={[styles.tile, { backgroundColor }]}>
+const Tile: React.FC<TileProps> = React.memo(({ character, backgroundColor, tileIndex }) => (
+  <View style={[styles.tile, { backgroundColor }]} testID={tileIndex}>
     <Text>{character}</Text>
   </View>
 ));

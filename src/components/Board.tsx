@@ -9,9 +9,10 @@ interface RowProps {
 
 const Row: React.FC<RowProps> = React.memo(({ tiles, rowIndex }) => (
   <View key={rowIndex} style={styles.row}>
-    {tiles.map((tileProps, colIndex) => (
-      <Tile key={`${rowIndex}-${colIndex}`} {...tileProps} />
-    ))}
+    {tiles.map((tileProps, colIndex) => {
+      const tileIndex = `${rowIndex}-${colIndex}`;
+      return (<Tile key={tileIndex} tileIndex={tileIndex} {...tileProps} />)
+    })}
   </View>
 ));
 
