@@ -5,23 +5,28 @@ import { useFetchPuzzle } from '../hooks/useFetchPuzzle';
 import Header from '../components/Header';
 import Board from '../components/Board';
 import Keyboard from '../components/Keyboard';
+import { arraysContainSameElements } from '../utils/functions/arraysContainSameElements';
 
 const Game: React.FC = () => {
   const puzzle = useFetchPuzzle();
 
   const [board, setBoard] = useState<TileProps[]>([]);
-  const [pendingTiles, setPendingTiles] = useState<TileProps[]>([]);
+  const [pendingSolution, setPendingSolution] = useState<string[]>([]);
+  const [isSolved, setIsSolved] = useState<boolean>(false);
 
-  const [isSolved, setIsSolved] = useState(false);
+  const compareEquasions = useCallback((): boolean => {
+    const hasSameCharacters = arraysContainSameElements(pendingSolution, puzzle.equation);
+    const pendingEquation = pendingSolution.join('');
+    return hasSameCharacters && eval(pendingEquation) === puzzle.value
+  }, [pendingSolution, puzzle]);
 
-  const getTileColor = useCallback((tile: TileProps, index: number) => {
-    const equationChars = puzzle.equation.split('');
-    const equationCharsSet = new Set(equationChars);
+  const getTileColor = useCallback((character: string, index: number) => {
+    const equationSet = new Set(puzzle.equation);
 
-    if (tile.character === equationChars[index]) {
+    if (character === puzzle.equation[index]) {
       // Character is exactly at the right place
       return 'green';
-    } else if (equationCharsSet.has(tile.character)) {
+    } else if (equationSet.has(character)) {
       // Character is in the equation but not at the right place
       return 'yellow';
     } else {
@@ -30,38 +35,35 @@ const Game: React.FC = () => {
   }, [puzzle]);
 
   const submitPendingTiles = useCallback(() => {
-    if (pendingTiles.length !== 6) {
+    if (pendingSolution.length !== 6) {
       console.error('Error: You must enter 6 characters.');
       return;
     }
 
-    const newTiles = pendingTiles.map((tile, index) => {
-      const color = getTileColor(tile, index);
-      return { ...tile, backgroundColor: color };
-    });
+    let solution = compareEquasions() ? puzzle.equation : pendingSolution
 
-    const allGreen = newTiles.every(tile => tile.backgroundColor === 'green');
-    if (allGreen) {
+    if (solution == puzzle.equation) {
       setIsSolved(true);
     }
 
+    const newTiles = solution.map((character, index) => {
+      const color = getTileColor(character, index);
+      return { character: character, backgroundColor: color };
+    });
+
     setBoard([...board, ...newTiles]);
-    setPendingTiles([]);
-  }, [getTileColor, pendingTiles, board]);
+    setPendingSolution([]);
+  }, [compareEquasions, getTileColor, pendingSolution, board]);
 
-  const removeLastPendingTile = useCallback(() => {
-    setPendingTiles(pendingTiles.slice(0, -1));
-  }, [pendingTiles]);
+  const removeLastPendingCharacter = useCallback(() => {
+    setPendingSolution(pendingSolution.slice(0, -1));
+  }, [pendingSolution]);
 
-  const addPendingTile = useCallback((key: string) => {
-    if (pendingTiles.length < 6) {
-      const pendingTile: TileProps = {
-        character: key,
-        backgroundColor: 'white',
-      };
-      setPendingTiles([...pendingTiles, pendingTile]);
+  const addPendingCharacter = useCallback((key: string) => {
+    if (pendingSolution.length < 6) {
+      setPendingSolution([...pendingSolution, key]);
     }
-  }, [pendingTiles]);
+  }, [pendingSolution]);
 
   const handleKeyPress = useCallback((key: string) => {
     if (isSolved) {
@@ -76,19 +78,19 @@ const Game: React.FC = () => {
         submitPendingTiles();
         break;
       case 'Delete':
-        removeLastPendingTile();
+        removeLastPendingCharacter();
         break;
       default:
-        addPendingTile(key);
+        addPendingCharacter(key);
         break;
     }
-  }, [submitPendingTiles, removeLastPendingTile, addPendingTile, isSolved]);
+  }, [submitPendingTiles, removeLastPendingCharacter, addPendingCharacter, isSolved]);
 
   return (
     <View style={styles.game}>
       <Header puzzle={puzzle.value} />
-      <Board tiles={[...board, ...pendingTiles]} />
-      <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved}/>
+      <Board tiles={[...board, ...pendingSolution.map(character => ({ character, backgroundColor: 'white' }))]} />
+      <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved} />
     </View>
   );
 };

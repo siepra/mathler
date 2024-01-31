@@ -4,12 +4,15 @@ import * as hooks from '../src/hooks/useFetchPuzzle';
 import Game from '../src/screens/Game';
 
 describe('Game', () => {
-    test('Tiles gets proper colors assigned', () => {
+
+    beforeAll(() => {
         jest.spyOn(hooks, 'useFetchPuzzle').mockReturnValue({
             value: 108,
-            equation: '23*5-7'
+            equation: ['2', '3', '*', '5', '-', '7']
         });
+    })
 
+    test('Tiles gets proper colors assigned', () => {
         render(<Game />);
 
         fireEvent.press(screen.getByTestId('key-2'));
@@ -29,11 +32,6 @@ describe('Game', () => {
     });
 
     test('Winning the game disables keyboard', () => {
-        jest.spyOn(hooks, 'useFetchPuzzle').mockReturnValue({
-            value: 108,
-            equation: '23*5-7'
-        });
-
         render(<Game />);
 
         fireEvent.press(screen.getByTestId('key-2'));
@@ -45,5 +43,24 @@ describe('Game', () => {
         fireEvent.press(screen.getByTestId('key-Enter'));
 
         expect(screen.getByTestId('key-2')).toBeDisabled();
+    })
+
+    test('Commutative solutions are automatically rearanged', () => {
+        render(<Game />);
+
+        fireEvent.press(screen.getByTestId('key-5'));
+        fireEvent.press(screen.getByTestId('key-*'));
+        fireEvent.press(screen.getByTestId('key-2'));
+        fireEvent.press(screen.getByTestId('key-3'));
+        fireEvent.press(screen.getByTestId('key--'));
+        fireEvent.press(screen.getByTestId('key-7'));
+        fireEvent.press(screen.getByTestId('key-Enter'));
+
+        expect(screen.getByTestId('0-0')).toHaveTextContent('2');
+        expect(screen.getByTestId('0-1')).toHaveTextContent('3');
+        expect(screen.getByTestId('0-2')).toHaveTextContent('*');
+        expect(screen.getByTestId('0-3')).toHaveTextContent('5');
+        expect(screen.getByTestId('0-4')).toHaveTextContent('-');
+        expect(screen.getByTestId('0-5')).toHaveTextContent('7');
     })
 });
