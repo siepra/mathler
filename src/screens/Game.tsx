@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Board from '../components/Board';
 import Keyboard from '../components/Keyboard';
 import { arraysContainSameElements } from '../utils/functions/arraysContainSameElements';
+import { evaluate } from 'mathjs';
 
 const Game: React.FC = () => {
   const puzzle = useFetchPuzzle();
@@ -17,7 +18,7 @@ const Game: React.FC = () => {
   const compareEquasions = useCallback((): boolean => {
     const hasSameCharacters = arraysContainSameElements(pendingSolution, puzzle.equation);
     const pendingEquation = pendingSolution.join('');
-    return hasSameCharacters && eval(pendingEquation) === puzzle.value
+    return hasSameCharacters && evaluate(pendingEquation) === puzzle.value
   }, [pendingSolution, puzzle]);
 
   const getTileColor = useCallback((character: string, index: number) => {
