@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { TileProps } from '../components/Tile';
 import { useFetchPuzzle } from '../hooks/useFetchPuzzle';
 import Header from '../components/Header';
@@ -89,13 +89,14 @@ const Game: React.FC = () => {
 
   return (
     <React.Fragment>
-      {puzzle && (
+      {puzzle.equation.length !== 0 && (
         <View style={styles.game}>
           <Header puzzle={puzzle.value} />
           <Board tiles={[...board, ...pendingSolution.map(character => ({ character, backgroundColor: 'white' }))]} />
           <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved} />
         </View>
       )}
+      {loading && <Text>Loading...</Text>}
     </React.Fragment>
   );
 };
