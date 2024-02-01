@@ -1,3 +1,4 @@
+import React from 'react';
 import '@testing-library/react-native/extend-expect';
 import {render, screen, fireEvent} from '@testing-library/react-native';
 import * as hooks from '../src/hooks/useFetchPuzzle';

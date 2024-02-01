@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
 interface Puzzle {
   value: number;
   equation: string[];
 }
 
-export function useFetchPuzzle(): { puzzle: Puzzle, loading: boolean, error: any } {
-  const [puzzle, setPuzle] = useState<Puzzle>({ value: 0, equation: [] });
+export function useFetchPuzzle(): {
+  puzzle: Puzzle;
+  loading: boolean;
+  error: any;
+} {
+  const [puzzle, setPuzle] = useState<Puzzle>({value: 0, equation: []});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState(null);
 
@@ -25,11 +29,11 @@ export function useFetchPuzzle(): { puzzle: Puzzle, loading: boolean, error: any
     }
 
     setLoading(false);
-  }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  return { puzzle, loading, error };
+  return {puzzle, loading, error};
 }

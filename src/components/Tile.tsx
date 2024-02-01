@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 export interface TileProps {
   character: string;
@@ -7,11 +7,13 @@ export interface TileProps {
   tileIndex?: string;
 }
 
-const Tile: React.FC<TileProps> = React.memo(({ character, backgroundColor, tileIndex }) => (
-  <View style={[styles.tile, { backgroundColor }]} testID={tileIndex}>
-    <Text>{character}</Text>
-  </View>
-));
+const Tile: React.FC<TileProps> = React.memo(
+  ({character, backgroundColor, tileIndex}) => (
+    <View style={[styles.tile, {backgroundColor}]} testID={tileIndex}>
+      <Text>{character}</Text>
+    </View>
+  ),
+);
 
 const styles = StyleSheet.create({
   tile: {

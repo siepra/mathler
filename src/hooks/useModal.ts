@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
 export interface ModalProps {
-    isModalOpen: boolean;
-    openModal: () => void;
-    closeModal: () => void;
+  isModalOpen: boolean;
+  openModal: () => void;
+  closeModal: () => void;
 }
 
 const useModal = (): ModalProps => {
@@ -17,7 +17,7 @@ const useModal = (): ModalProps => {
     setIsModalOpen(false);
   };
 
-  return { isModalOpen, openModal, closeModal };
+  return {isModalOpen, openModal, closeModal};
 };
 
 export default useModal;
