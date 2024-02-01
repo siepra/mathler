@@ -9,7 +9,7 @@ import { arraysContainSameElements } from '../utils/functions/arraysContainSameE
 import { evaluate } from 'mathjs';
 
 const Game: React.FC = () => {
-  const puzzle = useFetchPuzzle();
+  const { puzzle, loading, error } = useFetchPuzzle();
 
   const [board, setBoard] = useState<TileProps[]>([]);
   const [pendingSolution, setPendingSolution] = useState<string[]>([]);
@@ -88,11 +88,15 @@ const Game: React.FC = () => {
   }, [submitPendingTiles, removeLastPendingCharacter, addPendingCharacter, isSolved]);
 
   return (
-    <View style={styles.game}>
-      <Header puzzle={puzzle.value} />
-      <Board tiles={[...board, ...pendingSolution.map(character => ({ character, backgroundColor: 'white' }))]} />
-      <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved} />
-    </View>
+    <React.Fragment>
+      {puzzle && (
+        <View style={styles.game}>
+          <Header puzzle={puzzle.value} />
+          <Board tiles={[...board, ...pendingSolution.map(character => ({ character, backgroundColor: 'white' }))]} />
+          <Keyboard handleKeyPress={handleKeyPress} isSolved={isSolved} />
+        </View>
+      )}
+    </React.Fragment>
   );
 };
 

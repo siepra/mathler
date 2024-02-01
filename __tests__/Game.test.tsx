@@ -7,8 +7,12 @@ describe('Game', () => {
 
     beforeAll(() => {
         jest.spyOn(hooks, 'useFetchPuzzle').mockReturnValue({
-            value: 108,
-            equation: ['2', '3', '*', '5', '-', '7']
+            puzzle: {
+                value: 108,
+                equation: ['2', '3', '*', '5', '-', '7']
+            },
+            loading: false,
+            error: null
         });
     })
 
