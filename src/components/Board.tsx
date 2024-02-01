@@ -16,22 +16,25 @@ const Row: React.FC<RowProps> = React.memo(({ tiles, rowIndex }) => (
   </View>
 ));
 
+const blankTile: TileProps = { character: '', backgroundColor: 'white' };
+
 interface BoardProps {
   tiles: TileProps[];
 }
 
 const Board: React.FC<BoardProps> = ({ tiles }) => {
-  const blankTile: TileProps = { character: '', backgroundColor: 'white' };
 
-  const blankTilesCount = 36 - tiles.length;
-  const blankTiles = Array(blankTilesCount).fill(blankTile);
-  
-  const allTiles = [...tiles, ...blankTiles];
-
-  const boardTiles = Array.from({ length: 6 }, (_, rowIndex) => {
-    const rowTiles = allTiles.slice(rowIndex * 6, (rowIndex + 1) * 6);
-    return <Row key={rowIndex} rowIndex={rowIndex} tiles={rowTiles} />;
-  });
+  const boardTiles = React.useMemo(() => {
+    const blankTilesCount = 36 - tiles.length;
+    const blankTiles = Array(blankTilesCount).fill(blankTile);
+    
+    const allTiles = [...tiles, ...blankTiles];
+    
+    return Array.from({ length: 6 }, (_, rowIndex) => {
+      const rowTiles = allTiles.slice(rowIndex * 6, (rowIndex + 1) * 6);
+      return <Row key={rowIndex} rowIndex={rowIndex} tiles={rowTiles} />;
+    });
+  }, [tiles]);
 
   return <View style={styles.board}>{boardTiles}</View>;
 };
