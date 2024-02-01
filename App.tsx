@@ -12,6 +12,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Game from './src/screens/Game';
+import HelpModal from './src/modals/HelpModal';
+import useModal from './src/hooks/useModal';
 
 
 function App(): React.JSX.Element {
@@ -20,6 +22,8 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  const helpModal = useModal();
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -35,6 +39,7 @@ function App(): React.JSX.Element {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Game />
+          <HelpModal {...helpModal} />
         </View>
       </ScrollView>
     </SafeAreaView>
